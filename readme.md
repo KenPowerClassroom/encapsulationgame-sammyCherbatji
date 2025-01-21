@@ -9,17 +9,17 @@ Ensure that each class encapsulates its data and provides controlled access thro
 
 ## 2. Adherence to the Law of Demeter
 
-Objective: Avoid accessing the internal structure of objects (e.g., avoid chained method calls like player.getThing.doSomthing()).
+Objective: Avoid accessing the internal structure of objects (e.g., avoid chained method calls like `player.getThing().doSomthing()`).
 
-Move responsibilities for actions (e.g., attacking, equipping weapons) into the relevant classes (like Character or WeaponInventory).
+Move responsibilities for actions (e.g., attacking, equipping weapons) into the relevant classes.
 
 ## 3. Avoiding God Objects
 
-Reduce the responsibilities of overly large classes by delegating responsibilities to other objects.
+Reduce the responsibilities of overly large classes by *delegating* responsibilities to other classes (maybe some reponsibilities can be move to brand new classes).
 
 ## 4 . Tell-Don’t-Ask Principle
 
-Avoid extracting data from objects and making decisions in another class. Instead, tell the objects what to do by delegating responsibility to them.
+Avoid extracting data from objects and making decisions in another class. Instead, tell the objects what to do by *delegating* responsibility to them.
 
 ## 5. Eliminating Code Duplication (DRY Principle)
 
