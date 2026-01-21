@@ -52,15 +52,6 @@ public:
         :  health(characterHealth), 
           strength(characterStrength), currentWeapon(nullptr) {}
 
-    void maybeHeal()
-    {
-        if (std::rand() % 3 == 0)
-        {
-            int healAmount = (std::rand() % 20) + 1;
-            heal(healAmount);
-        }
-    }
-
     int getHealth() const { return health; }
 
     const std::string& getName() const 
@@ -110,6 +101,26 @@ class Player : public Character
 public:
     Player(const std::string& name, int playerHealth, int characterStrength)
     :Character(name,playerHealth, characterStrength) {}
+
+public:
+    void maybeHeal() 
+    {
+        if (shouldHeal()) 
+        {
+            int healAmount = randomHealAmount();
+            heal(healAmount);
+        }
+    }
+
+private:
+    bool shouldHeal() const
+    { 
+        return std::rand() % 3 == 0;
+    }
+    int randomHealAmount() const 
+    { 
+        return (std::rand() % 20) + 1;
+    }
 };
 
 class Enemy : public Character 
