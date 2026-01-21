@@ -77,9 +77,9 @@ public:
         {
             return;
         }
-
         int damage = currentWeapon->damageValue() * strength;
         target.takeDamage(damage);
+        std::cout << name << " attacks " << target.getName() << " with " << currentWeapon->getName() << " for " << damage << " damage.\n";
     }
 
     void takeDamage(int amount) 
@@ -131,9 +131,10 @@ private:
 
     void maybeHealPlayer() 
     {
-        if (std::rand() % 3 == 0) 
+        if (std::rand() % 3 == 0)
         {
-            player.heal((std::rand() % 20) + 1);
+            int healAmount = (std::rand() % 20) + 1;
+            player.heal(healAmount); // Player handles its own healing
         }
     }
 
