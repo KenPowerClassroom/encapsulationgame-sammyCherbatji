@@ -52,6 +52,15 @@ public:
         :  health(characterHealth), 
           strength(characterStrength), currentWeapon(nullptr) {}
 
+    void maybeHeal()
+    {
+        if (std::rand() % 3 == 0)
+        {
+            int healAmount = (std::rand() % 20) + 1;
+            heal(healAmount);
+        }
+    }
+
     int getHealth() const { return health; }
 
     const std::string& getName() const 
@@ -110,52 +119,47 @@ public:
     :Character(name, EnemyHealth, characterStrength) {}
 };
 
-
-class GameManager 
+class Armory
 {
 private:
-    Player& player;
-    Enemy& enemy;
     std::vector<Weapon> weapons;
 
-    void equipRandom(Character& character) 
-    {
-        if (weapons.empty())
-        {
-            return;
-        }
-
-        int index = std::rand() % weapons.size();
-        character.equip(weapons[index]);
-    }
-
-    void maybeHealPlayer() 
-    {
-        if (std::rand() % 3 == 0)
-        {
-            int healAmount = (std::rand() % 20) + 1;
-            player.heal(healAmount); // Player handles its own healing
-        }
-    }
-
 public:
-    GameManager( Player& p, Enemy& e)
-        : player(p), enemy(e) 
-    {
-        std::srand(std::time(0));
-    }
-
-    void addWeapon(const Weapon& weapon) 
+    void addWeapon(const Weapon& weapon)
     {
         weapons.push_back(weapon);
     }
 
-    void startGame() 
+    Weapon& getRandomWeapon()
     {
-        std::cout << "Game started: " << player.getName() << " vs " << enemy.getName() << "\n";
+        int index = std::rand() % weapons.size();
+        return weapons[index];
+    }
 
-        equipRandomWeapon(player);
-        equipRandomWeapon(enemy);
+    bool isEmpty() const
+    {
+        return weapons.empty();
+    }
+};
+
+class BattleManager
+{
+private:
+    Player& player;
+    Enemy& enemy;
+    Armory& armory;
+
+public:
+    BattleManager( Player& p, Enemy& e, Armory& a)
+        : player(p), enemy(e), armory(a) {}
+
+    void startBattle()
+    {
+
+        player.equip(armory.getRandomWeapon());
+        enemy.equip(armory.getRandomWeapon());
+
+        std::cout << "Battle  started: " << player.getName() << " vs " << enemy.getName() << "\n";
 
         while (player.isAlive() && enemy.isAlive()) 
         {
@@ -166,7 +170,8 @@ public:
             }
 
             enemy.attack(player);
-            maybeHealPlayer();
+            player.maybeHeal();
+
 
             std::cout << "-----------------------\n";
         }
@@ -180,54 +185,24 @@ public:
             std::cout << enemy.getName() << " has been defeated.\n";
         }
     }
-
-
-    Weapon* equipRandomWeapon(Character& character) 
-    {
-
-        if (weapons.empty()) 
-        {
-            return nullptr;
-        }
-
-        int randomIndex = std::rand() % weapons.size();
-        Weapon* selectedWeapon = &weapons[randomIndex];
-        character.equip(*selectedWeapon);
-
-        return selectedWeapon;
-    }
-
-    void randomlyHealPlayer() 
-    {
-        int healAmount = std::rand() % 50 + 1; // heal between 1 and 50 point
-        player.heal(healAmount);
-    }
 };
 
 // Main Function
 int main() 
 {
+    std::srand(std::time(0));
+
     Player player("Hero", 300, 2);
     Enemy enemy("Goblin", 150, 4);
 
-    Weapon sword("Sword", 15);
-    Weapon axe("Axe", 20);
-    Weapon dagger("Dagger", 10);
-    Weapon bow("Bow", 25);
+    Armory armory;
+    armory.addWeapon(Weapon("Sword", 15));
+    armory.addWeapon(Weapon("Axe", 20));
+    armory.addWeapon(Weapon("Dagger", 10));
+    armory.addWeapon(Weapon("Bow", 25));
 
-    GameManager game(player, enemy);
-
-    game.addWeapon(sword);
-    game.addWeapon(axe);
-    game.addWeapon(dagger);
-    game.addWeapon(bow);
-
-    // Equip weapons
-    game.equipRandomWeapon(player); // Equip sword to player
-    game.equipRandomWeapon(enemy);  // Equip axe to enemy
-
-
-    game.startGame();
+    BattleManager  game(player, enemy, armory);
+    game.startBattle();
 
     return 0;
 }
