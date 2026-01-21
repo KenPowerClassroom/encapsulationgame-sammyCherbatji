@@ -164,11 +164,6 @@ public:
         while (player.isAlive() && enemy.isAlive()) 
         {
             player.attack(enemy);
-            if (!enemy.isAlive())
-            {
-                break;
-            }
-
             enemy.attack(player);
             player.maybeHeal();
 
